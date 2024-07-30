@@ -1,0 +1,32 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>  
+    <script>  
+        let model;  
+
+        async function loadModel() {  
+            model = await tf.loadLayersModel('https://teachablemachine.withgoogle.com/models/BqiOQL6A9/');  
+        }  
+
+        async function makePrediction(inputData) {  
+            const inputTensor = tf.tensor2d([inputData], [1, inputData.length]);  
+            const prediction = model.predict(inputTensor);  
+            const output = await prediction.data();  
+            return output.join(',');  
+        }  
+
+        window.onload = loadModel;  
+
+        window.makePrediction = function(inputData) {  
+            makePrediction(inputData).then(output => {  
+                window.ReactNativeWebView.postMessage(output);  
+            });  
+        };  
+    </script>  
+</head>  
+<body>  
+    <h1>TensorFlow.js Model</h1>  
+    <div id="result"></div>  
+</body>  
+</html>
